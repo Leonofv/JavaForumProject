@@ -14,6 +14,9 @@ import com.example.ForumProject.service.TopicService;
 import com.example.ForumProject.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +36,12 @@ public class MessageController {
     private final UserService userService;
 
     @GetMapping("/{topicId}")
-    public List<MessageDto> getMessagesByTopic(@PathVariable Long topicId) {
-        List<Message> messages = messageService.getMessagesByTopicId(topicId);
-        return messages.stream()
+    public List<MessageDto> getPagedMessagesByTopic(@PathVariable Long topicId,
+                                                    @RequestParam(defaultValue = "0") int page,
+                                                    @RequestParam(defaultValue = "5") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Message> pageMessage = messageService.getPagedMessagesByTopicId(topicId, pageable);
+        return pageMessage.stream()
                 .map(messageMapper::toMessageDto)
                 .collect(Collectors.toList());
     }

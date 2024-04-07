@@ -5,6 +5,8 @@ import com.example.ForumProject.model.Message;
 import com.example.ForumProject.model.Topic;
 import com.example.ForumProject.repository.TopicRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,8 +18,8 @@ public class TopicServiceImpl implements TopicService {
     private final TopicRepository topicRepository;
 
     @Override
-    public List<Topic> getTopics() {
-        return topicRepository.findAll();
+    public Page<Topic> getPagedTopics(Pageable pageable) {
+        return topicRepository.findAll(pageable);
     }
 
     @Override

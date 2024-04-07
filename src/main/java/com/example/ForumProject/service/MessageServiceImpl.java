@@ -6,6 +6,8 @@ import com.example.ForumProject.repository.MessageRepository;
 import com.example.ForumProject.repository.TopicRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,11 +21,10 @@ public class MessageServiceImpl implements MessageService {
     private final TopicRepository topicRepository;
 
     @Override
-    public List<Message> getMessagesByTopicId(Long topicId) { // получаем список сообщений текущего топика по id
+    public Page<Message> getPagedMessagesByTopicId(Long topicId, Pageable pageable) {
         Optional<Topic> optionalTopic = topicRepository.findById(topicId);
         if (optionalTopic.isPresent()) {
-            Topic topic = optionalTopic.get();
-            return topic.getMessages();
+            return messageRepository.findByTopicId(topicId, pageable);
         } else {
             throw new EntityNotFoundException("Messages not found with topic id: " + topicId);
         }
