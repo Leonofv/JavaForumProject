@@ -12,7 +12,6 @@ public class UserRequest {
     private String firstName;
 
     @Schema(example = "testUser")
-    @NotBlank
     private String fatherName;
 
     @Schema(example = "testUser")

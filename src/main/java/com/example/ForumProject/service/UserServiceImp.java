@@ -43,6 +43,6 @@ public class UserServiceImp implements UserService {
 
     @Override
     public User getUserById(Long id) {
-        return userRepository.getById(id);
+        return userRepository.getReferenceById(id);
     }
 }

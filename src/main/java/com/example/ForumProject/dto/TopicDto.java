@@ -8,7 +8,6 @@ public record TopicDto(Long id, String title, TopicDto.UserDto user, List<Messag
     public record MessageDto(Long id, String text, ZonedDateTime dateOfCreate) {
     }
 
-    public record UserDto(Long id) {
+    public record UserDto(String username) {
     }
-
 }

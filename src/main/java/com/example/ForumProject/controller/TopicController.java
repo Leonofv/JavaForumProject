@@ -1,6 +1,6 @@
 package com.example.ForumProject.controller;
 
-import com.example.ForumProject.dto.MessageRequest;
+import com.example.ForumProject.security.CustomUserDetails;
 import com.example.ForumProject.dto.TopicRequest;
 import com.example.ForumProject.dto.TopicDto;
 import com.example.ForumProject.mapper.MessageMapper;
@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -35,7 +36,7 @@ public class TopicController {
 
     @Operation(security = {@SecurityRequirement(name = BEARER_KEY_SECURITY_SCHEME)})
     @GetMapping
-    public List<TopicDto> getTopics() { // получаем список топиков
+    public List<TopicDto> getTopics() {
         List<Topic> topics = topicService.getTopics();
         return topics.stream()
                 .map(topicMapper::toTopicDto)
@@ -45,24 +46,21 @@ public class TopicController {
     @Operation(security = {@SecurityRequirement(name = BEARER_KEY_SECURITY_SCHEME)})
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/create")
-    public TopicDto createTopicWithFirstMessage(
-                                                @Valid @RequestBody TopicRequest topicRequest,
-                                                @Valid @RequestBody MessageRequest messageRequest) {
-        User user = userService.getUserById(1L);
-        Topic topic = topicMapper.toTopic(topicRequest);
-        Message message = messageMapper.toMessage(messageRequest);
+    public TopicDto createTopicWithFirstMessage(@AuthenticationPrincipal CustomUserDetails currentUser,
+                                                @Valid @RequestBody TopicRequest topicRequest) {
+        User user = userService.validateAndGetUserByUsername(currentUser.getUsername());
 
+        Topic topic = topicMapper.toTopic(topicRequest);
         topic.setId(UUID.randomUUID().getMostSignificantBits());
         topic.setUser(user);
 
+        Message message = messageMapper.toMessage(topicRequest.getMessageRequest());
         message.setId(UUID.randomUUID().getMostSignificantBits());
         message.setTopic(topic);
         message.setUser(user);
 
-        // Устанавливаем сообщение в список сообщений темы
-        topic.setMessages(List.of(message));
+        topic.getMessages().add(message);
 
-        // Создаем тему в сервисе и возвращаем результат
-        return topicMapper.toTopicDto(topicService.saveTopic(topic)); // ошибка скорее всего где-то тут при передаче в toTopicDto
+        return topicMapper.toTopicDto(topicService.saveTopic(topic));
     }
 }

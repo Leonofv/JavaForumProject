@@ -35,13 +35,11 @@ public class DatabaseInitializer implements CommandLineRunner {
             return;
         }
 
-        // Создаем и сохраняем пользователей
         USERS.forEach(user -> {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userService.saveUser(user);
         });
 
-        // Создаем и сохраняем топики и первое сообщение для каждого топика
         for (Topic topic : TOPICS) {
             Optional<User> userOptional = userService.getUserByUsername("admin");
             if (userOptional.isPresent()) {
@@ -49,14 +47,12 @@ public class DatabaseInitializer implements CommandLineRunner {
                 topic.setUser(user);
                 Topic savedTopic = topicService.saveTopic(topic);
 
-                // Создаем первое сообщение для текущего топика
                 Message firstMessage = new Message("First message for topic " + savedTopic.getTitle());
                 firstMessage.setUser(user);
                 firstMessage.setTopic(savedTopic);
                 firstMessage.setDateOfCreate(ZonedDateTime.now());
                 messageService.saveMessage(firstMessage);
 
-                // Добавляем новые собщения другого пользователя
                 Optional<User> userOptional2 = userService.getUserByUsername("user");
                 if (userOptional2.isPresent()) {
                     User user2 = userOptional2.get();
@@ -71,8 +67,6 @@ public class DatabaseInitializer implements CommandLineRunner {
             }
         }
     }
-
-
 
     private static final List<User> USERS = Arrays.asList(
             new User("admin", "Bob", "Michael", "Johnson", "admin", WebSecurityConfig.ADMIN),
@@ -90,6 +84,5 @@ public class DatabaseInitializer implements CommandLineRunner {
             new Message("New message1"),
             new Message("New message2")
     );
-
 }
 

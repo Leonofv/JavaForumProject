@@ -1,4 +1,4 @@
-package com.example.ForumProject.config;
+package com.example.ForumProject.security;
 
 import com.example.ForumProject.model.User;
 import com.example.ForumProject.service.UserService;

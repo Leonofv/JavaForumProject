@@ -21,7 +21,7 @@ public class MessageMapperImpl implements MessageMapper {
         if (message == null) {
             return null;
         }
-        MessageDto.TopicDto topicDto = new MessageDto.TopicDto(message.getTopic().getId()); // получаем id топика
+        MessageDto.TopicDto topicDto = new MessageDto.TopicDto(message.getTopic().getId());
         MessageDto.UserDto userDto = new MessageDto.UserDto(message.getUser().getUsername());
         return new MessageDto(message.getId(), userDto, topicDto, message.getText(), message.getDateOfCreate());
     }

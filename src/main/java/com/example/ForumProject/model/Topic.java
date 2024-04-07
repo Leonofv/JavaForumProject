@@ -18,7 +18,7 @@ public class Topic {
 
     private String title;
 
-    @ManyToOne(fetch = FetchType.LAZY) // множество топиков к одному пользователю
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 

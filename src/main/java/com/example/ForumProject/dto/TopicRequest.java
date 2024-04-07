@@ -1,6 +1,7 @@
 package com.example.ForumProject.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -10,4 +11,7 @@ public class TopicRequest {
     @Schema(example = "My title")
     @NotBlank
     private String title;
+
+    @Valid
+    private MessageRequest messageRequest; // переделать
 }

@@ -17,11 +17,11 @@ public class Message {
 
     private String text;
 
-    @ManyToOne(fetch = FetchType.LAZY) // множество сообщений к одному пользователю
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY) // множество сообщений к одном топику
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "topic_id")
     private Topic topic;
 

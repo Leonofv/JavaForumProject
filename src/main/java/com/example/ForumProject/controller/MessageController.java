@@ -1,6 +1,6 @@
 package com.example.ForumProject.controller;
 
-import com.example.ForumProject.config.CustomUserDetails;
+import com.example.ForumProject.security.CustomUserDetails;
 import com.example.ForumProject.dto.MessageRequest;
 import com.example.ForumProject.dto.MessageDto;
 import com.example.ForumProject.exception.MessagePermissionException;
@@ -32,7 +32,7 @@ public class MessageController {
     private final MessageMapper messageMapper;
     private final UserService userService;
 
-    @GetMapping("/{topicId}") // работает
+    @GetMapping("/{topicId}")
     public List<MessageDto> getMessagesByTopic(@PathVariable Long topicId) {
         List<Message> messages = messageService.getMessagesByTopicId(topicId);
         return messages.stream()
@@ -41,12 +41,12 @@ public class MessageController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/create/{topicId}") // работает
+    @PostMapping("/create/{topicId}")
     public MessageDto createMessageInCurrentTopic(@AuthenticationPrincipal CustomUserDetails currentUser,
                                                   @Valid @RequestBody MessageRequest messageRequest,
                                                   @PathVariable Long topicId) {
         User user = userService.validateAndGetUserByUsername(currentUser.getUsername());
-        Topic topic = topicService.validateAndGetTopic(String.valueOf(topicId));
+        Topic topic = topicService.validateAndGetTopic(topicId);
         Message message = messageMapper.toMessage(messageRequest);
         message.setId(UUID.randomUUID().getMostSignificantBits());
         message.setTopic(topic);
@@ -54,11 +54,11 @@ public class MessageController {
         return messageMapper.toMessageDto(messageService.saveMessage(message));
     }
 
-    @DeleteMapping("/delete/{Id}") // работает
+    @DeleteMapping("/delete/{id}")
     public MessageDto deleteMessage(@AuthenticationPrincipal CustomUserDetails currentUser,
-                                    @PathVariable Long Id) {
+                                    @PathVariable Long id) {
         User user = userService.validateAndGetUserByUsername(currentUser.getUsername());
-        Message message = messageService.getMessageById(Id);
+        Message message = messageService.getMessageById(id);
         if (message == null) {
             throw new MessageNotFoundException("Message not found");
         }
@@ -69,8 +69,7 @@ public class MessageController {
         return messageMapper.toMessageDto(message);
     }
 
-
-    @PutMapping("/edit/{Id}") // работает
+    @PutMapping("/edit/{Id}")
     public MessageDto editMessage(@AuthenticationPrincipal CustomUserDetails currentUser,
                                   @Valid @RequestBody MessageRequest messageRequest,
                                   @PathVariable Long Id) {
@@ -86,6 +85,4 @@ public class MessageController {
         messageService.saveMessage(message);
         return messageMapper.toMessageDto(message);
     }
-
-
 }

@@ -20,7 +20,7 @@ public class MessageServiceImpl implements MessageService {
 
     @Override
     public List<Message> getMessagesByTopicId(Long topicId) { // получаем список сообщений текущего топика по id
-        Optional<Topic> optionalTopic = topicRepository.findById(String.valueOf(topicId));
+        Optional<Topic> optionalTopic = topicRepository.findById(topicId);
         if (optionalTopic.isPresent()) {
             Topic topic = optionalTopic.get();
             return topic.getMessages();

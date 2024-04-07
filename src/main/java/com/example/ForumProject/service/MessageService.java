@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface MessageService {
 
-    Message saveMessage(Message message); // добавление топика
+    Message saveMessage(Message message);
 
     List<Message> getMessagesByTopicId(Long topicId);
 

@@ -1,6 +1,5 @@
 package com.example.ForumProject.security;
 
-import com.example.ForumProject.config.CustomUserDetails;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;

@@ -34,15 +34,16 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
-                .headers().frameOptions().sameOrigin().and() // Затычка, нужна только для корректной работы "/h2-console"
+                .headers().frameOptions().sameOrigin().and() // Затычка, нужна только для корректной работы  "http://localhost:8080/h2-console"
                 .authorizeHttpRequests(authorizeHttpRequests -> authorizeHttpRequests
-                        .requestMatchers(HttpMethod.POST, "/api/topics/**", "/api/messages/**", "/api/users/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE,  "/api/messages/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/api/messages/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,"/api/topics/**", "/api/messages/**", "/api/users/**").permitAll()
-                        .requestMatchers( "/api/users/**").permitAll()
-                        .requestMatchers(   "/auth/**", "/api/topics/**").permitAll()
-                        .requestMatchers("/", "/error", "/csrf", "/h2-console/**","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/topics/**", "/api/messages/**", "/api/users/**").hasAnyAuthority(ADMIN, USER)
+                        .requestMatchers(HttpMethod.DELETE,  "/api/messages/**").hasAnyAuthority(ADMIN, USER)
+                        .requestMatchers(HttpMethod.PUT, "/api/messages/**").hasAnyAuthority(ADMIN, USER)
+                        .requestMatchers(HttpMethod.GET,"/api/topics/**", "/api/messages/**", "/api/users/**").hasAnyAuthority(ADMIN, USER)
+                        .requestMatchers(HttpMethod.DELETE,  "/api/admin/**").hasAuthority(ADMIN)
+                        .requestMatchers(HttpMethod.PUT, "/api/admin/**").hasAuthority(ADMIN)
+                        .requestMatchers(HttpMethod.POST, "/auth/**").permitAll()
+                        .requestMatchers("/", "/error", "/csrf", "/h2-console/**","/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exceptionHandling -> exceptionHandling.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

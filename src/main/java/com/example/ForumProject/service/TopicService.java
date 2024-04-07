@@ -8,7 +8,11 @@ public interface TopicService {
 
     List<Topic> getTopics();
 
-    Topic saveTopic(Topic topic); // добавление топика
+    Topic saveTopic(Topic topic);
 
-    Topic validateAndGetTopic(String id);
+    void deleteTopic(Topic topic);
+
+    Topic validateAndGetTopic(Long id);
+
+    Topic getTopicById(Long topicId);
 }
